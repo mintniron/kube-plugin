@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Use kubectl top to get resource usage stats for namespace’s pods 
+kubectl top pod -n "$NAMESPACE" | tail -n +2 | while read line; do
+  # Debug: Print the current line processed
+  echo "DEBUG: Line read: $line"
+
+  # Resouces usage stats from Kubernetes
+  NAME=$(echo "$line" | awk '{print $1}')
+  CPU=$(echo "$line" | awk '{print $2}')
+  MEMORY=$(echo "$line" | awk '{print $3}')
+
+  # Print the values
+  echo "DEBUG: NAME=$NAME, CPU=$CPU, MEMORY=$MEMORY"
+
+  # Output the stats to the console
+  printf "+-----------------------+------------------------+-----------------------+----------------------+\n"
+  printf "| %-21s | %-22s | %-21s | %-20s |\n" "NAMESPACE" "NAME" "CPU(cores)" "MEMORY(bytes)"
+  printf "+-----------------------+------------------------+-----------------------+----------------------+\n"
+  printf "| %-21s | %-22s | %-21s | %-20s |\n" "$NAMESPACE" "$NAME" "$CPU" "$MEMORY"
+  printf "+-----------------------+------------------------+-----------------------+----------------------+\n"
+done
